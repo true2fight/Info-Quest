@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -801,7 +802,7 @@
                         </div>
                     `;
                 } else if (step === 1) {
-                    const compOpts = ["Ноутбук", "Суперкомп'ютер", "Планшет", "Вбудований комп'ютер", "Смарт-годинник"];
+                    const compOpts = ["Ноутбук", "Суперкомп'ютер", "Вбудований комп'ютер", "Смарт-годинник"];
                     container.innerHTML = `
                         <div>
                             <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 3.2</span>
@@ -811,7 +812,7 @@
                             <div id="situation-matching" class="space-y-3 mb-6">
                                 ${ui.createMatchingRow(1, "👨‍🔬 Науковцю для розрахунку мільярдів складних обчислень", compOpts, "Суперкомп'ютер")}
                                 ${ui.createMatchingRow(2, "🎒 Учень хоче зручно працювати з уроками в школі та вдома", compOpts, "Ноутбук")}
-                                ${ui.createMatchingRow(3, "🚗 Автомобіль для керування роботою двигуна та гальм", compOpts, "Вбудований комп'ютер")}
+                                ${ui.createMatchingRow(3, "🚗 Комп'ютер повинен керувати роботою двигуна та гальм", compOpts, "Вбудований комп'ютер")}
                             </div>
                             <button onclick="game.checkLevel3Step2()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
                                 Перевірити відповіді
@@ -892,20 +893,188 @@
                         </div>
                     `;
                 } else if (step === 1) {
-                    const compOpts = ["Ноутбук", "Суперкомп'ютер", "Планшет", "Вбудований комп'ютер", "Смарт-годинник"];
                     container.innerHTML = `
                         <div>
-                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 3.2</span>
-                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Кому який комп'ютер?</h4>
-                            <p class="text-xs text-slate-400 mb-4">Добери відповідний тип комп'ютера для кожної ситуації:</p>
-                            
-                            <div id="situation-matching" class="space-y-3 mb-6">
-                                ${ui.createMatchingRow(1, "👨‍🔬 Науковцю для розрахунку мільярдів складних обчислень", compOpts, "Суперкомп'ютер")}
-                                ${ui.createMatchingRow(2, "🎒 Учні беруть гаджет із собою на уроки та додому", compOpts, "Ноутбук")}
-                                ${ui.createMatchingRow(3, "🚗 Для керування роботою двигуна та гальм автомобіля", compOpts, "Вбудований комп'ютер")}
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 4.2</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Функція вбудованого комп'ютера</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                🧺 Яке головне завдання вбудованого мікрокомп'ютера у сучасній пральній машині?
                             </div>
-                            <button onclick="game.checkLevel3Step2()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
-                                Перевірити вибір
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Автоматично керувати програмами прання, температурою та віджимом', true)}
+                                ${ui.createOptionBtn('B', 'Показувати фільми на великому екрані', false)}
+                                ${ui.createOptionBtn('C', 'Підключатися до космічних супутників', false)}
+                                ${ui.createOptionBtn('D', 'Прасувати та складати одяг у шафу', false)}
+                            </div>
+                        </div>
+                    `;
+                } else if (step === 2) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 4.3</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Принцип роботи сенсорів</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                🤖 Як вбудований комп'ютер роботи-пилососа уникає зіткнення зі стінами та меблями?
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Отримує дані з датчиків (сенсорів) та змінює напрямок руху', true)}
+                                ${ui.createOptionBtn('B', 'Людина постійно керує ним через пульт у режимі реального часу', false)}
+                                ${ui.createOptionBtn('C', 'Він просто випадково вдаряється об меблі та повертає', false)}
+                                ${ui.createOptionBtn('D', 'Стіни самі відсуваються від пилососа', false)}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            checkLevel4Step1() {
+                const cards = document.querySelectorAll('#embedded-select [data-correct]');
+                let correctCount = 0;
+                let wrongSelected = false;
+
+                cards.forEach(card => {
+                    const isChecked = card.classList.contains('border-cyan-500');
+                    const isCorrect = card.getAttribute('data-correct') === 'true';
+
+                    if (isChecked && isCorrect) correctCount++;
+                    if (isChecked && !isCorrect) wrongSelected = true;
+                });
+
+                if (correctCount === 4 && !wrongSelected) {
+                    this.advanceStep(5);
+                } else {
+                    sound.playError();
+                    ui.showModal("Не зовсім вірно", "Згадай: смарт-годинник, мікрохвильовка з програмами, Smart TV та робот-пилосос мають вбудовані мікрокомп'ютери!", "fa-circle-xmark text-red-400");
+                }
+            }
+
+            renderLevel5() {
+                const step = this.currentStepIdx;
+                const container = document.getElementById('level-content');
+
+                if (step === 0) {
+                    const procOpts = ["Введення", "Опрацювання", "Фіксація (Збереження)", "Передавання"];
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 5.1</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Послідовність інформаційних процесів</h4>
+                            <p class="text-xs text-slate-400 mb-4">Встанови порядок дій при створенні та відправці фотографії:</p>
+                            
+                            <div id="process-order-container" class="space-y-3 mb-6">
+                                ${ui.createMatchingRow(1, "1. Зйомка кадру камерою", procOpts, "Введення")}
+                                ${ui.createMatchingRow(2, "2. Застосування красивого фотофільтру", procOpts, "Опрацювання")}
+                                ${ui.createMatchingRow(3, "3. Запис фото у галерею смартфона", procOpts, "Фіксація (Збереження)")}
+                                ${ui.createMatchingRow(4, "4. Надсилання фото другу в чаті", procOpts, "Передавання")}
+                            </div>
+                            <button onclick="game.checkLevel5Step1()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Перевірити порядок
+                            </button>
+                        </div>
+                    `;
+                } else if (step === 1) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 5.2</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Визначення процесу</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                💾 Тривале розміщення файлу в пам'яті накопичувача для його майбутнього використання — це процес:
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Збереження інформації', true)}
+                                ${ui.createOptionBtn('B', 'Введення даних', false)}
+                                ${ui.createOptionBtn('C', 'Пошук помилок', false)}
+                                ${ui.createOptionBtn('D', 'Передавання мережею', false)}
+                            </div>
+                        </div>
+                    `;
+                } else if (step === 2) {
+                    const devOpts = ["Пристрій Введення", "Пристрій Опрацювання", "Пристрій Збереження", "Пристрій Виведення"];
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 5.3</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Пристрої та Інформаційні Процеси</h4>
+                            <p class="text-xs text-slate-400 mb-4">Зістав пристрій із відповідним процесним призначенням:</p>
+                            
+                            <div id="dev-proc-container" class="space-y-3 mb-6">
+                                ${ui.createMatchingRow(1, "⌨️ Клавіатура", devOpts, "Пристрій Введення")}
+                                ${ui.createMatchingRow(2, "⚙️ Процесор (CPU)", devOpts, "Пристрій Опрацювання")}
+                                ${ui.createMatchingRow(3, "💾 Накопичувач (SSD/HDD)", devOpts, "Пристрій Збереження")}
+                                ${ui.createMatchingRow(4, "🖥️ Монітор", devOpts, "Пристрій Виведення")}
+                            </div>
+                            <button onclick="game.checkLevel5Step3()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Перевірити відповідність
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
+            checkLevel5Step1() {
+                const selects = document.querySelectorAll('#process-order-container select');
+                let allCorrect = true;
+                selects.forEach(select => {
+                    if (select.value !== select.getAttribute('data-target')) allCorrect = false;
+                });
+
+                if (allCorrect) {
+                    this.advanceStep(5);
+                } else {
+                    sound.playError();
+                    ui.showModal("Невірно", "Послідовність: Зйомка -> Введення, Фільтр -> Опрацювання, Галерея -> Фіксація (Збереження), Чат -> Передавання!", "fa-circle-xmark text-red-400");
+                }
+            }
+
+            checkLevel5Step3() {
+                const selects = document.querySelectorAll('#dev-proc-container select');
+                let allCorrect = true;
+                selects.forEach(select => {
+                    if (select.value !== select.getAttribute('data-target')) allCorrect = false;
+                });
+
+                if (allCorrect) {
+                    this.advanceStep(5);
+                } else {
+                    sound.playError();
+                    ui.showModal("Невірно", "Перевірте відповідність: Клавіатура -> Введення, Процесор -> Опрацювання, SSD/HDD -> Збереження, Монітор -> Виведення!", "fa-triangle-exclamation text-amber-400");
+                }
+            }
+
+            renderLevel6() {
+                const step = this.currentStepIdx;
+                const container = document.getElementById('level-content');
+
+                if (step === 0) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 6.1</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">«Мозок» комп'ютера</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                🧠 Який саме компонент відповідає за виконання програм та опрацювання всіх даних?
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Процесор (CPU)', true)}
+                                ${ui.createOptionBtn('B', 'Блок живлення', false)}
+                                ${ui.createOptionBtn('C', 'Комп\'ютерний корпус', false)}
+                                ${ui.createOptionBtn('D', 'Кулер (вентилятор)', false)}
+                            </div>
+                        </div>
+                    `;
+                } else if (step === 1) {
+                    const typeOpts = ["Пристрій Введення", "Пристрій Виведення"];
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 6.2</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Введення чи Виведення?</h4>
+                            <p class="text-xs text-slate-400 mb-4">Розподіли периферійні пристрої за напрямком інформаційного потоку:</p>
+                            
+                            <div id="io-container" class="space-y-3 mb-6">
+                                ${ui.createMatchingRow(1, "🖱️ Комп'ютерна миша", typeOpts, "Пристрій Введення")}
+                                ${ui.createMatchingRow(2, "🔊 Звукові колонки", typeOpts, "Пристрій Виведення")}
+                                ${ui.createMatchingRow(3, "🎙️ Мікрофон", typeOpts, "Пристрій Введення")}
+                                ${ui.createMatchingRow(4, "🖨️ Принтер", typeOpts, "Пристрій Виведення")}
+                            </div>
+                            <button onclick="game.checkLevel6Step2()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Перевірити розподіл
                             </button>
                         </div>
                     `;
@@ -913,15 +1082,15 @@
                     container.innerHTML = `
                         <div>
                             <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 6.3</span>
-                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Таємниця Оперативної Пам'яті</h4>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Особливості оперативної пам'яті</h4>
                             <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
-                                🧠 Яка пам'ять повністю очищує весь свій вміст, коли комп'ютер вимикають з мережі?
+                                ⚡ Що відбувається з даними в Оперативній пам'яті (ОЗП / RAM) після вимкнення живлення комп'ютера?
                             </div>
                             <div class="grid grid-cols-1 gap-3">
-                                ${ui.createOptionBtn('A', "Оперативна пам'ять (ОЗП / RAM)", true)}
-                                ${ui.createOptionBtn('B', 'Жорсткий диск (HDD)', false)}
-                                ${ui.createOptionBtn('C', 'USB-флешка', false)}
-                                ${ui.createOptionBtn('D', 'Оптичний диск', false)}
+                                ${ui.createOptionBtn('A', 'Вони повністю стираються (зникають)', true)}
+                                ${ui.createOptionBtn('B', 'Вони автоматично друкуються на папері', false)}
+                                ${ui.createOptionBtn('C', 'Вони назавжди зберігаються на флешці', false)}
+                                ${ui.createOptionBtn('D', 'Вони надсилаються на мережевий сервер', false)}
                             </div>
                         </div>
                     `;
@@ -929,17 +1098,17 @@
             }
 
             checkLevel6Step2() {
-                const selects = document.querySelectorAll('#io-sorting select');
-                let correct = true;
+                const selects = document.querySelectorAll('#io-container select');
+                let allCorrect = true;
                 selects.forEach(select => {
-                    if (select.value !== select.getAttribute('data-target')) correct = false;
+                    if (select.value !== select.getAttribute('data-target')) allCorrect = false;
                 });
 
-                if (correct) {
-                    this.advanceStep(4);
+                if (allCorrect) {
+                    this.advanceStep(5);
                 } else {
                     sound.playError();
-                    ui.showModal("Упс", "Клавіатура та мікрофон — Введення! Монітор та навушники — Виведення!", "fa-circle-xmark text-red-400");
+                    ui.showModal("Невірно", "Миша й мікрофон передають дані В комп'ютер (Введення), а колонки й принтер — виводять З нього (Виведення)!", "fa-circle-xmark text-red-400");
                 }
             }
 
@@ -991,7 +1160,7 @@
                     this.advanceStep(5);
                 } else {
                     sound.playError();
-                    ui.showModal("Невірний код!", "Перевір 6 фрагментів коду з верхньої панелі! Підказка: ЗНАННЯ", "fa-key text-amber-400");
+                    ui.showModal("Невірний код!", "Перевірте 6 фрагментів коду з верхньої панелі! Підказка: ЗНАННЯ", "fa-key text-amber-400");
                 }
             }
         }
