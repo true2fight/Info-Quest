@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ІНФОКВЕСТ: Місія — врятувати інформацію</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0b0f19 0%, #111827 40%, #1e1b4b 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+            user-select: none;
+            overflow-x: hidden;
+        }
+        .font-exo {
+            font-family: 'Exo 2', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .glass-panel-hover:hover {
+            border-color: rgba(56, 189, 248, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.25);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.35);
+        }
+        .glow-amber {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);
+        }
+        .glow-emerald {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+        }
+        .shake-animation {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            z-index: 9999;
+            pointer-events: none;
+            animation: fall 3s linear forwards;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(105vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-100 antialiased selection:bg-cyan-500 selection:text-white">
+
+    <!-- Top Global Header -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800 px-4 py-3 shadow-lg">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <!-- Brand / Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="game.showMap()">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg glow-cyan">
+                    <i class="fa-solid fa-shield-halved text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-exo font-black text-lg sm:text-xl tracking-wide bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                        ІНФОКВЕСТ
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">Місія — врятувати інформацію</p>
+                </div>
+            </div>
+
+            <!-- Stats & Controls -->
+            <div class="flex items-center gap-3 sm:gap-6">
+                <!-- Score Pill -->
+                <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-amber-500/30 text-amber-400 font-bold text-sm sm:text-base">
+                    <i class="fa-solid fa-star text-amber-400 animate-pulse"></i>
+                    <span>Бали: <span id="score-display">0</span>/70</span>
+                </div>
+
+                <!-- Code Fragments Pill -->
+                <div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800/90 border border-cyan-500/30 text-cyan-300 text-xs font-mono tracking-widest">
+                    <i class="fa-solid fa-key text-cyan-400 mr-1"></i>
+                    <span id="code-tracker">КЛЮЧ: _ _ _ _ _ _</span>
+                </div>
+
+                <!-- Audio Toggle -->
+                <button id="sound-btn" onclick="sound.toggle()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 transition-all" title="Звукові ефекти">
+                    <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Canvas -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 flex flex-col justify-center">
+
+        <!-- SCREEN 0: START SCREEN -->
+        <section id="screen-start" class="transition-all duration-300">
+            <div class="glass-panel rounded-3xl p-6 sm:p-10 text-center max-w-3xl mx-auto border border-cyan-500/20 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-20 -top-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-3xl text-white shadow-xl glow-cyan">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+
+                <span class="inline-block px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-semibold text-xs uppercase tracking-wider mb-4">
+                    Клас: 5 • Інформатична освітня галузь
+                </span>
+
+                <h2 class="font-exo font-black text-3xl sm:text-5xl text-white tracking-tight mb-2">
+                    ІНФОКВЕСТ
+                </h2>
+                <h3 class="text-xl sm:text-2xl font-bold text-cyan-400 mb-6">
+                    Місія — врятувати інформацію!
+                </h3>
+
+                <div class="bg-slate-900/60 rounded-2xl p-5 sm:p-6 mb-8 text-left border border-slate-800 text-slate-300 text-sm sm:text-base leading-relaxed space-y-3">
+                    <p class="font-semibold text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                        Увага, Інфоагенте!
+                    </p>
+                    <p>
+                        У цифровому місті сталася велика аварія. Інформація перестала правильно рухатися між людьми, комп'ютерами та інформаційними системами!
+                    </p>
+                    <p>
+                        Щоб відновити роботу міста, тобі потрібно пройти <strong>7 інтерактивних секторальних рівнів</strong>, виконати всі технологічні завдання та зібрати секретний код відновлення з 6 літер.
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-2 border-t border-slate-800/80 text-xs text-slate-400">
+                        <span><i class="fa-solid fa-clock text-cyan-400 mr-1"></i> 25–35 хвилин</span>
+                        <span><i class="fa-solid fa-trophy text-amber-400 mr-1"></i> Макс. балів: 70+</span>
+                        <span><i class="fa-solid fa-layer-group text-blue-400 mr-1"></i> 7 рівнів</span>
+                    </div>
+                </div>
+
+                <button onclick="game.startMission()" class="w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-exo font-bold text-xl shadow-lg glow-cyan transform hover:scale-105 transition-all flex items-center justify-center gap-3 mx-auto">
+                    <i class="fa-solid fa-play"></i>
+                    ПОЧАТИ МІСІЮ
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 1: MAP SCREEN -->
+        <section id="screen-map" class="hidden transition-all duration-300">
+            <div class="text-center mb-6">
+                <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold uppercase tracking-wider">
+                    Центр керування Інфоміста
+                </span>
+                <h2 class="font-exo font-bold text-2xl sm:text-3xl text-white mt-2">
+                    🗺️ Карта місії
+                </h2>
+                <p class="text-slate-400 text-sm">Обирай доступний сектор та відновлюй інформаційні потоки!</p>
+            </div>
+
+            <!-- Map Grid -->
+            <div id="map-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <!-- Dynamically generated sector cards -->
+            </div>
+        </section>
+
+        <!-- SCREEN 2: ACTIVE GAME LEVEL PLAYGROUND -->
+        <section id="screen-level" class="hidden transition-all duration-300">
+            <!-- Level Dynamic Header -->
+            <div class="glass-panel rounded-2xl p-4 sm:p-5 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <button onclick="game.showMap()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-2 border border-slate-700">
+                        <i class="fa-solid fa-map"></i> Карта
+                    </button>
+                    <div>
+                        <span id="level-badge" class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Рівень 1</span>
+                        <h3 id="level-title" class="font-exo font-bold text-lg sm:text-xl text-white">Назва рівню</h3>
+                    </div>
+                </div>
+
+                <!-- Sub-step Progress indicator & Hint button -->
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                    <div id="substep-pills" class="flex gap-1.5">
+                        <!-- Dynamic sub-step dots -->
+                    </div>
+                    <button id="hint-btn" onclick="game.useHint()" class="px-3.5 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-lightbulb text-amber-400"></i> Підказка
+                    </button>
+                </div>
+            </div>
+
+            <!-- Level Interactive Work Area -->
+            <div id="level-content" class="glass-panel rounded-3xl p-5 sm:p-8 min-h-[380px] flex flex-col justify-between">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+        </section>
+
+        <!-- SCREEN 3: LEVEL CLEAR MODAL / SUMMARY -->
+        <section id="screen-level-clear" class="hidden transition-all duration-300">
+            <div class="glass-panel rounded-3xl p-8 text-center max-w-xl mx-auto border border-emerald-500/30 shadow-2xl relative overflow-hidden">
+                <div class="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-4xl text-white shadow-xl glow-emerald">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h3 class="font-exo font-black text-2xl sm:text-3xl text-white mb-2" id="clear-title">
+                    🎉 РІВЕНЬ ПРОЙДЕНО!
+                </h3>
+                <p id="clear-desc" class="text-slate-300 text-sm sm:text-base mb-6 leading-relaxed">
+                    Ти успішно усунув збій у даному секторі!
+                </p>
+
+                <!-- Code Fragment Unlocked Display -->
+                <div class="bg-slate-900/90 rounded-2xl p-4 mb-6 border border-cyan-500/30 inline-block w-full">
+                    <span class="text-xs text-slate-400 uppercase tracking-widest block mb-1">Отримано секретний ключ:</span>
+                    <div class="flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-key text-amber-400 text-2xl"></i>
+                        <span id="clear-code-letter" class="font-exo font-black text-3xl text-cyan-400 tracking-wider">«З»</span>
+                    </div>
+                </div>
+
+                <!-- Points Gained Breakdown -->
+                <div class="flex justify-center items-center gap-6 mb-8 text-sm">
+                    <div class="text-amber-400 font-bold">
+                        <i class="fa-solid fa-coins mr-1"></i> +<span id="clear-points">15</span> балів
+                    </div>
+                    <div id="clear-bonus-badge" class="text-emerald-400 font-bold hidden">
+                        <i class="fa-solid fa-gift mr-1"></i> +2 Бонус (Без підказок!)
+                    </div>
+                </div>
+
+                <button id="next-level-btn" onclick="game.nextLevel()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-exo font-bold text-lg shadow-lg glow-emerald transition-all flex items-center justify-center gap-2">
+                    <span>ПРОДОВЖИТИ МІСІЮ</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: GAME VICTORY CERTIFICATE -->
+        <section id="screen-victory" class="hidden transition-all duration-300">
+            <div class="glass-panel rounded-3xl p-6 sm:p-10 text-center max-w-3xl mx-auto border border-amber-500/30 shadow-2xl relative">
+                <div class="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-500 to-yellow-500 flex items-center justify-center text-4xl text-slate-950 shadow-2xl glow-amber">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+
+                <span class="px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold text-xs uppercase tracking-wider mb-3 inline-block">
+                    МІСІЮ УСПІШНО ВИКОНАНО!
+                </span>
+
+                <h2 class="font-exo font-black text-3xl sm:text-4xl text-white mb-2">
+                    ІНФОМІСТО ВРЯТОВАНО!
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base mb-6 max-w-xl mx-auto">
+                    Вітаємо, Спеціальний Інфоагенте! Ти відновив роботу всіх інформаційних систем та технологій міста.
+                </p>
+
+                <!-- Final Score Card -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block mb-1">Підсумковий рахунок</span>
+                        <span id="final-score-val" class="font-exo font-black text-3xl text-amber-400">70</span>
+                        <span class="text-xs text-slate-500 block">з 70 балів</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block mb-1">Секретний Код</span>
+                        <span class="font-exo font-black text-2xl text-cyan-400">ЗНАННЯ</span>
+                        <span class="text-xs text-emerald-400 block">Активовано ✅</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block mb-1">Звання Агента</span>
+                        <span id="agent-rank" class="font-exo font-bold text-lg text-indigo-300">Головний Інфоагент</span>
+                        <span class="text-xs text-slate-500 block">Рівень: 5 Клас</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="game.restart()" class="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-exo font-bold text-base shadow-lg glow-cyan transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> ЗІГРАТИ ЗНОВУ
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Feedback / Hint Modal -->
+    <div id="modal-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-md w-full border border-slate-700 shadow-2xl transform transition-all">
+            <div id="modal-icon-wrap" class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl mb-4 mx-auto border border-amber-500/30">
+                <i id="modal-icon" class="fa-solid fa-lightbulb"></i>
+            </div>
+            <h4 id="modal-title" class="font-exo font-bold text-xl text-white text-center mb-2">Підказка</h4>
+            <p id="modal-body" class="text-slate-300 text-sm leading-relaxed text-center mb-6">Текст підказки...</p>
+            <button onclick="ui.closeModal()" class="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 transition-all">
+                Зрозуміло
+            </button>
+        </div>
+    </div>
+
+    <script>
+        class SoundEngine {
+            constructor() {
+                this.muted = false;
+                this.ctx = null;
+            }
+
+            initCtx() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+            }
+
+            toggle() {
+                this.muted = !this.muted;
+                const icon = document.getElementById('sound-icon');
+                if (this.muted) {
+                    icon.className = 'fa-solid fa-volume-xmark text-red-400';
+                } else {
+                    icon.className = 'fa-solid fa-volume-high text-slate-300';
+                    this.playBeep(600, 'sine', 0.1);
+                }
+            }
+
+            playBeep(freq = 440, type = 'sine', duration = 0.15) {
+                if (this.muted) return;
+                try {
+                    this.initCtx();
+                    if (!this.ctx) return;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch (e) {}
+            }
+
+            playSuccess() {
+                if (this.muted) return;
+                this.playBeep(523.25, 'triangle', 0.1);
+                setTimeout(() => this.playBeep(659.25, 'triangle', 0.1), 100);
+                setTimeout(() => this.playBeep(783.99, 'triangle', 0.25), 200);
+            }
+
+            playError() {
+                if (this.muted) return;
+                this.playBeep(220, 'sawtooth', 0.2);
+                setTimeout(() => this.playBeep(180, 'sawtooth', 0.25), 150);
+            }
+
+            playFanfare() {
+                if (this.muted) return;
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => this.playBeep(freq, 'sine', 0.3), idx * 150);
+                });
+            }
+        }
+
+        const sound = new SoundEngine();
+
+        const SECTORS_DATA = [
+            {
+                id: 1,
+                name: "Інфодетектив",
+                icon: "fa-magnifying-glass",
+                codeLetter: "З",
+                color: "from-blue-500 to-cyan-500",
+                unlocked: true,
+                completed: false
+            },
+            {
+                id: 2,
+                name: "Техномісто",
+                icon: "fa-globe",
+                codeLetter: "Н",
+                color: "from-cyan-500 to-teal-500",
+                unlocked: false,
+                completed: false
+            },
+            {
+                id: 3,
+                name: "Комп'ютерний зоопарк",
+                icon: "fa-laptop",
+                codeLetter: "А",
+                color: "from-indigo-500 to-blue-500",
+                unlocked: false,
+                completed: false
+            },
+            {
+                id: 4,
+                name: "Таємниця вбудованого комп'ютера",
+                icon: "fa-microchip",
+                codeLetter: "Н",
+                color: "from-purple-500 to-indigo-500",
+                unlocked: false,
+                completed: false
+            },
+            {
+                id: 5,
+                name: "Подорож інформації",
+                icon: "fa-arrows-rotate",
+                codeLetter: "Н",
+                color: "from-pink-500 to-purple-500",
+                unlocked: false,
+                completed: false
+            },
+            {
+                id: 6,
+                name: "Усередині комп'ютера",
+                icon: "fa-brain",
+                codeLetter: "Я",
+                color: "from-amber-500 to-orange-500",
+                unlocked: false,
+                completed: false
+            },
+            {
+                id: 7,
+                name: "Врятувати Інфомісто",
+                icon: "fa-trophy",
+                codeLetter: "🏆",
+                color: "from-emerald-500 to-green-500",
+                unlocked: false,
+                completed: false
+            }
+        ];
+
+        class GameEngine {
+            constructor() {
+                this.score = 0;
+                this.currentLevelIdx = 0;
+                this.currentStepIdx = 0;
+                this.usedHintInCurrentLevel = false;
+                this.collectedCode = Array(6).fill('_');
+                this.sectors = JSON.parse(JSON.stringify(SECTORS_DATA));
+            }
+
+            startMission() {
+                sound.playBeep(500, 'sine', 0.1);
+                this.showMap();
+            }
+
+            showMap() {
+                ui.showScreen('screen-map');
+                ui.renderMap(this.sectors);
+            }
+
+            openLevel(levelIdx) {
+                if (!this.sectors[levelIdx].unlocked) {
+                    sound.playError();
+                    ui.showModal("Сектор заблоковано!", "Пройди попередні рівні, щоб відкрити цей сектор.", "fa-lock text-red-400");
+                    return;
+                }
+                this.currentLevelIdx = levelIdx;
+                this.currentStepIdx = 0;
+                this.usedHintInCurrentLevel = false;
+                sound.playBeep(600, 'sine', 0.1);
+                ui.showScreen('screen-level');
+                this.renderCurrentSubstep();
+            }
+
+            renderCurrentSubstep() {
+                const lvlNum = this.currentLevelIdx + 1;
+                ui.updateLevelHeader(lvlNum, this.sectors[this.currentLevelIdx].name, this.currentStepIdx, this.getSubstepCount(lvlNum));
+
+                switch(lvlNum) {
+                    case 1: this.renderLevel1(); break;
+                    case 2: this.renderLevel2(); break;
+                    case 3: this.renderLevel3(); break;
+                    case 4: this.renderLevel4(); break;
+                    case 5: this.renderLevel5(); break;
+                    case 6: this.renderLevel6(); break;
+                    case 7: this.renderLevel7(); break;
+                }
+            }
+
+            getSubstepCount(lvlNum) {
+                if (lvlNum === 7) return 2;
+                return 3;
+            }
+
+            useHint() {
+                this.usedHintInCurrentLevel = true;
+                sound.playBeep(450, 'triangle', 0.15);
+                const hintText = this.getHintText(this.currentLevelIdx + 1, this.currentStepIdx);
+                ui.showModal("Підказка від Інфопомічника", hintText, "fa-lightbulb text-amber-400");
+            }
+
+            getHintText(lvl, step) {
+                const hints = {
+                    "1-0": "Інформаційна система завжди працює з інформацією: отримує, опрацьовує, зберігає чи передає її.",
+                    "1-1": "Шукай об'єкти, які здатні обробляти, показувати або передавати дані (наприклад, навчальні ресурси чи мережі).",
+                    "1-2": "Інформаційна система об'єднує і людей, і техніку, і програми, і самі дані!",
+                    "2-0": "Подумай: Онлайн-урок це Освіта, GPS-навігатор це Транспорт, а Електронна картка — Медицина.",
+                    "2-1": "Інформаційні технології автоматизують роботу з даними запису до лікаря.",
+                    "2-2": "Нагадування в календарі збереже час та завчасно сповістить про завдання.",
+                    "3-0": "Ноутбуки та планшети — портативні. Для вирахування складних орбіт застосовують суперкомп'ютери.",
+                    "3-1": "Науковцям потрібен суперкомп'ютер, учню — ноутбук, автомобілю — вбудована система.",
+                    "3-2": "Ноутбук, планшет і смартфон — це портативні гаджети. А суперкомп'ютер — це величезна спеціальна система.",
+                    "4-0": "Розумні пристрої мають мікроконтролери та екрани для виконання програм.",
+                    "4-1": "Комп'ютер пральної машини керує режимами прання, температурою та віджимом.",
+                    "4-2": "Сенсори вимірюють параметри (температуру, перешкоди), а комп'ютер виконує дію.",
+                    "5-0": "Послідовність: Спочатку знімаємо (Введення), потім застосовуємо фільтр (Опрацювання), фіксуємо файл (Збереження) та надсилаємо (Передавання).",
+                    "5-1": "Розміщення та тривала фіксація файлу на накопичувачі — це процес 'Збереження інформації'.",
+                    "5-2": "Клавіатура — Введення, Процесор — Опрацювання, Пам'ять — Збереження, Монітор — Виведення.",
+                    "6-0": "Головним 'мозком' комп'ютера, що виконує обчислення, є Процесор (CPU).",
+                    "6-1": "Пристрої введення передають дані В комп'ютер (миша, клавіатура), виведення — показують З комп'ютера (монітор, звук).",
+                    "6-2": "Оперативна пам'ять (ОЗП) очищується при вимкненні живлення.",
+                    "7-0": "Введіть букви секретного коду за правилом: З-Н-А-Н-Н-Я.",
+                    "7-1": "Подумай про ключові поняття інформатики, які ми проходили!"
+                };
+                return hints[`${lvl}-${step}`] || "Будь уважним та аналізуй умови завдання!";
+            }
+
+            advanceStep(earnedPoints) {
+                this.score += earnedPoints;
+                ui.updateScore(this.score);
+                sound.playSuccess();
+
+                const maxSteps = this.getSubstepCount(this.currentLevelIdx + 1);
+                this.currentStepIdx++;
+
+                if (this.currentStepIdx >= maxSteps) {
+                    this.completeLevel();
+                } else {
+                    this.renderCurrentSubstep();
+                }
+            }
+
+            completeLevel() {
+                const lvlIdx = this.currentLevelIdx;
+                this.sectors[lvlIdx].completed = true;
+
+                // Unlock next sector if available
+                if (lvlIdx + 1 < this.sectors.length) {
+                    this.sectors[lvlIdx + 1].unlocked = true;
+                }
+
+                // Check bonus
+                let bonus = 0;
+                if (!this.usedHintInCurrentLevel) {
+                    bonus = 2;
+                    this.score += bonus;
+                    ui.updateScore(this.score);
+                }
+
+                // Store code letter (for levels 1 to 6)
+                if (lvlIdx < 6) {
+                    this.collectedCode[lvlIdx] = this.sectors[lvlIdx].codeLetter;
+                    ui.updateCodeTracker(this.collectedCode);
+                }
+
+                ui.showLevelClear(
+                    this.sectors[lvlIdx].name,
+                    this.sectors[lvlIdx].codeLetter,
+                    15,
+                    bonus > 0
+                );
+            }
+
+            nextLevel() {
+                if (this.currentLevelIdx + 1 < this.sectors.length) {
+                    this.openLevel(this.currentLevelIdx + 1);
+                } else {
+                    this.showVictory();
+                }
+            }
+
+            showVictory() {
+                sound.playFanfare();
+                ui.triggerConfetti();
+                ui.showScreen('screen-victory');
+                document.getElementById('final-score-val').innerText = this.score;
+
+                let rank = "Молодший Інфоагент";
+                if (this.score >= 65) rank = "Головний Інфоагент Міста";
+                else if (this.score >= 50) rank = "Майстер Інфотехнологій";
+                else if (this.score >= 35) rank = "Техно-Детектив";
+
+                document.getElementById('agent-rank').innerText = rank;
+            }
+
+            restart() {
+                this.score = 0;
+                this.currentLevelIdx = 0;
+                this.currentStepIdx = 0;
+                this.collectedCode = Array(6).fill('_');
+                this.sectors = JSON.parse(JSON.stringify(SECTORS_DATA));
+                ui.updateScore(0);
+                ui.updateCodeTracker(this.collectedCode);
+                this.showMap();
+            }
+
+            renderLevel1() {
+                const step = this.currentStepIdx;
+                const container = document.getElementById('level-content');
+
+                if (step === 0) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 1.1</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-4">Що найкраще описує інформаційну систему?</h4>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Будь-який електричний прилад в будинку', false)}
+                                ${ui.createOptionBtn('B', 'Система, яка забезпечує роботу з інформацією (пошук, збереження, опрацювання)', true)}
+                                ${ui.createOptionBtn('C', 'Тільки персональний комп\'ютер', false)}
+                                ${ui.createOptionBtn('D', 'Тільки програма на смартфоні', false)}
+                            </div>
+                        </div>
+                    `;
+                } else if (step === 1) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 1.2</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Знайди інформаційні системи</h4>
+                            <p class="text-xs text-slate-400 mb-4">Вибери всі правильні об'єкти (можна кілька):</p>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" id="multi-select-l1">
+                                ${ui.createCheckCard('Google Classroom', true, 'fa-graduation-cap')}
+                                ${ui.createCheckCard('Банкомат', true, 'fa-money-bill-transfer')}
+                                ${ui.createCheckCard('Звичайний стілець', false, 'fa-chair')}
+                                ${ui.createCheckCard('Електронний щоденник', true, 'fa-book-bookmark')}
+                                ${ui.createCheckCard('Комп\'ютерна мережа', true, 'fa-network-wired')}
+                                ${ui.createCheckCard('Футбольний м\'яч', false, 'fa-football')}
+                            </div>
+                            <button onclick="game.checkLevel1Step2()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Перевірити відповідь
+                            </button>
+                        </div>
+                    `;
+                } else if (step === 2) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 1.3</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Збери систему</h4>
+                            <p class="text-xs text-slate-400 mb-4">Які з наведених складових можуть взаємодіяти в інформаційній системі?</p>
+                            
+                            <div class="grid grid-cols-2 gap-4 mb-6">
+                                <div class="p-4 rounded-2xl bg-slate-800/80 border border-cyan-500/30 text-center">
+                                    <i class="fa-solid fa-user-astronaut text-3xl text-cyan-400 mb-2"></i>
+                                    <div class="font-bold text-sm">🧑 Людина</div>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-slate-800/80 border border-cyan-500/30 text-center">
+                                    <i class="fa-solid fa-database text-3xl text-blue-400 mb-2"></i>
+                                    <div class="font-bold text-sm">💾 Дані</div>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-slate-800/80 border border-cyan-500/30 text-center">
+                                    <i class="fa-solid fa-desktop text-3xl text-indigo-400 mb-2"></i>
+                                    <div class="font-bold text-sm">💻 Технічні засоби</div>
+                                </div>
+                                <div class="p-4 rounded-2xl bg-slate-800/80 border border-cyan-500/30 text-center">
+                                    <i class="fa-solid fa-code text-3xl text-teal-400 mb-2"></i>
+                                    <div class="font-bold text-sm">⚙️ Програми</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button onclick="game.advanceStep(5)" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 font-bold text-white transition-all shadow-lg">
+                                    ✅ Усі чотири складові взаємодіють!
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            checkLevel1Step2() {
+                const cards = document.querySelectorAll('#multi-select-l1 [data-correct]');
+                let correctCount = 0;
+                let wrongSelected = false;
+
+                cards.forEach(card => {
+                    const isChecked = card.classList.contains('border-cyan-500');
+                    const isCorrect = card.getAttribute('data-correct') === 'true';
+
+                    if (isChecked && isCorrect) correctCount++;
+                    if (isChecked && !isCorrect) wrongSelected = true;
+                });
+
+                if (correctCount === 4 && !wrongSelected) {
+                    this.advanceStep(5);
+                } else {
+                    sound.playError();
+                    ui.showModal("Не зовсім вірно", "Згадай: інформаційні системи працюють з інформацією та мережами, а не зі звичайними меблями чи спорядженням!", "fa-circle-xmark text-red-400");
+                }
+            }
+
+            renderLevel2() {
+                const step = this.currentStepIdx;
+                const container = document.getElementById('level-content');
+
+                if (step === 0) {
+                    const shuffledOpts = ["🚗 Транспорт", "🏫 Освіта", "🎮 Розваги", "🏥 Медицина", "🏦 Банки"];
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 2.1</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Де це використовують?</h4>
+                            <p class="text-xs text-slate-400 mb-4">З'єднай ситуацію із відповідною сферою застосування ІТ:</p>
+                            
+                            <div id="matching-container" class="space-y-3 mb-6">
+                                ${ui.createMatchingRow(1, "1. Онлайн-урок", shuffledOpts, "🏫 Освіта")}
+                                ${ui.createMatchingRow(2, "2. Електронна картка пацієнта", shuffledOpts, "🏥 Медицина")}
+                                ${ui.createMatchingRow(3, "3. Онлайн-банкінг", shuffledOpts, "🏦 Банки")}
+                                ${ui.createMatchingRow(4, "4. GPS-навігатор", shuffledOpts, "🚗 Транспорт")}
+                                ${ui.createMatchingRow(5, "5. Комп'ютерна гра", shuffledOpts, "🎮 Розваги")}
+                            </div>
+                            <button onclick="game.checkLevel2Step1()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Перевірити відповідності
+                            </button>
+                        </div>
+                    `;
+                } else if (step === 1) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 2.2</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Впізнай роль технології</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                👩‍⚕️ Марійка записалася до лікаря через сайт, не виходячи з дому. Яку роль тут відіграють інформаційні технології?
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Допомагають швидко обробити та зберегти інформацію про запис', true)}
+                                ${ui.createOptionBtn('B', 'Повністю замінюють справжнього лікаря', false)}
+                                ${ui.createOptionBtn('C', 'Готують смачну їжу для пацієнта', false)}
+                                ${ui.createOptionBtn('D', 'Керують автомобілем швидкої допомоги', false)}
+                            </div>
+                        </div>
+                    `;
+                } else if (step === 2) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 2.3</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Технологія для проблеми</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                🎒 Андрій часто забуває про виконання домашніх завдань. Яке цифрове рішення йому допоможе?
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Кишеньковий ліхтарик', false)}
+                                ${ui.createOptionBtn('B', 'Нагадування у цифровому календарі на смартфоні', true)}
+                                ${ui.createOptionBtn('C', 'Бездротові навушники', false)}
+                                ${ui.createOptionBtn('D', 'Звичайний принтер', false)}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            checkLevel2Step1() {
+                const selects = document.querySelectorAll('#matching-container select');
+                let allCorrect = true;
+                selects.forEach(select => {
+                    if (select.value !== select.getAttribute('data-target')) {
+                        allCorrect = false;
+                    }
+                });
+
+                if (allCorrect) {
+                    this.advanceStep(5);
+                } else {
+                    sound.playError();
+                    ui.showModal("Упс!", "Перевірте, чи правильно розкладено сфери: Урок -> Освіта, Картка -> Медицина, Навігатор -> Транспорт!", "fa-triangle-exclamation text-amber-400");
+                }
+            }
+
+            renderLevel3() {
+                const step = this.currentStepIdx;
+                const container = document.getElementById('level-content');
+
+                if (step === 0) {
+                    const catOpts = ["Стаціонарний", "Портативний", "Суперкомп'ютер", "Вбудований"];
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 3.1</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Розсортуй комп'ютери</h4>
+                            <p class="text-xs text-slate-400 mb-4">Визнач категорію для кожного пристрою:</p>
+                            
+                            <div id="comp-sort-container" class="space-y-3 mb-6">
+                                ${ui.createMatchingRow(1, "🖥️ Персональний комп'ютер (ПК)", catOpts, "Стаціонарний")}
+                                ${ui.createMatchingRow(2, "💻 Ноутбук", catOpts, "Портативний")}
+                                ${ui.createMatchingRow(3, "📱 Планшет", catOpts, "Портативний")}
+                                ${ui.createMatchingRow(4, "🚀 Комп'ютер розрахунку космічних орбіт", catOpts, "Суперкомп'ютер")}
+                                ${ui.createMatchingRow(5, "🚗 Комп'ютер автомобіля", catOpts, "Вбудований")}
+                                ${ui.createMatchingRow(6, "🧺 Комп'ютер пральної машини", catOpts, "Вбудований")}
+                            </div>
+                            <button onclick="game.checkLevel3Step1()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Перевірити сортування
+                            </button>
+                        </div>
+                    `;
+                } else if (step === 1) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 3.2</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Кому який комп'ютер?</h4>
+                            <div class="space-y-4 mb-6">
+                                <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-sm">
+                                    <span class="text-cyan-400 font-bold">1. Науковцю</span> потрібно виконувати мільярди складних обчислень для прогнозу погоди.
+                                    <div class="mt-2 font-bold text-emerald-400">-> Суперкомп'ютер</div>
+                                </div>
+                                <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-sm">
+                                    <span class="text-cyan-400 font-bold">2. Учень</span> хоче зручно працювати з уроками в школі та вдома.
+                                    <div class="mt-2 font-bold text-emerald-400">-> Ноутбук</div>
+                                </div>
+                                <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-sm">
+                                    <span class="text-cyan-400 font-bold">3. Автомобіль</span> потребує контролю за роботою двигуна та гальм.
+                                    <div class="mt-2 font-bold text-emerald-400">-> Вбудований комп'ютер</div>
+                                </div>
+                            </div>
+                            <button onclick="game.advanceStep(3)" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 font-bold text-white transition-all shadow-md">
+                                ✅ Все абсолютно вірно!
+                            </button>
+                        </div>
+                    `;
+                } else if (step === 2) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 3.3</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Хто зайвий у групі?</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                🔍 Подивись на список пристроїв. Який із них НЕ належить до персональних портативних гаджетів?
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Ноутбук', false)}
+                                ${ui.createOptionBtn('B', 'Планшет', false)}
+                                ${ui.createOptionBtn('C', 'Смартфон', false)}
+                                ${ui.createOptionBtn('D', 'Суперкомп\'ютер', true)}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            checkLevel3Step1() {
+                const selects = document.querySelectorAll('#comp-sort-container select');
+                let allCorrect = true;
+                selects.forEach(select => {
+                    if (select.value !== select.getAttribute('data-target')) allCorrect = false;
+                });
+
+                if (allCorrect) {
+                    this.advanceStep(6);
+                } else {
+                    sound.playError();
+                    ui.showModal("Невірно", "Перевірте сортування: Ноутбук/Планшет -> Портативний, Орбіти -> Суперкомп'ютер, Авто/Пральна машина -> Вбудований!", "fa-circle-xmark text-red-400");
+                }
+            }
+
+            renderLevel4() {
+                const step = this.currentStepIdx;
+                const container = document.getElementById('level-content');
+
+                if (step === 0) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 4.1</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Знайди вбудовані комп'ютери</h4>
+                            <p class="text-xs text-slate-400 mb-4">Обери всі побутові пристрої, які мають вбудований мікрокомп'ютер:</p>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" id="embedded-select">
+                                ${ui.createCheckCard('Смарт-годинник', true, 'fa-clock')}
+                                ${ui.createCheckCard('Звичайний механічний тостер', false, 'fa-bread-slice')}
+                                ${ui.createCheckCard('Мікрохвильовка з програмами', true, 'fa-kitchen-set')}
+                                ${ui.createCheckCard('Smart TV (Телевізор)', true, 'fa-tv')}
+                                ${ui.createCheckCard('Робот-пилосос', true, 'fa-robot')}
+                                ${ui.createCheckCard('Звичайний металевий ключ', false, 'fa-key')}
+                            </div>
+                            <button onclick="game.checkLevel4Step1()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Перевірити вибір
+                            </button>
+                        </div>
+                    `;
+                } else if (step === 1) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 4.2</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Роль мікрокомп'ютера</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                🧺 Яку головну функцію виконує вбудований комп'ютер у пральній машині?
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Керує режимами прання, температурою та віджимом', true)}
+                                ${ui.createOptionBtn('B', 'Самостійно купує пральний порошок у магазині', false)}
+                                ${ui.createOptionBtn('C', 'Показує мультфільми під час прання', false)}
+                                ${ui.createOptionBtn('D', 'Прасує одяг гарячою праскою', false)}
+                            </div>
+                        </div>
+                    `;
+                } else if (step === 2) {
+                    const sensorOpts = ["Зупинити робот-пилосос", "Подати сигнал будильника", "Регулювати нагрів"];
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 4.3</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Мікро-пазл: Датчики та Дії</h4>
+                            <p class="text-xs text-slate-400 mb-4">З'єднай датчик із правильною дією вбудованого комп'ютера:</p>
+                            
+                            <div id="sensor-matching" class="space-y-3 mb-6">
+                                ${ui.createMatchingRow(1, "🌡️ Датчик температури в духовій шафі", sensorOpts, "Регулювати нагрів")}
+                                ${ui.createMatchingRow(2, "🦇 Датчик перешкоди попереду", sensorOpts, "Зупинити робот-пилосос")}
+                                ${ui.createMatchingRow(3, "⏰ Таймер зворотного відліку", sensorOpts, "Подати сигнал будильника")}
+                            </div>
+                            <button onclick="game.checkLevel4Step3()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Завершити зв'язок
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
+            checkLevel4Step1() {
+                const cards = document.querySelectorAll('#embedded-select [data-correct]');
+                let correctCount = 0;
+                let wrongSelected = false;
+
+                cards.forEach(card => {
+                    const isChecked = card.classList.contains('border-cyan-500');
+                    const isCorrect = card.getAttribute('data-correct') === 'true';
+                    if (isChecked && isCorrect) correctCount++;
+                    if (isChecked && !isCorrect) wrongSelected = true;
+                });
+
+                if (correctCount === 4 && !wrongSelected) {
+                    this.advanceStep(5);
+                } else {
+                    sound.playError();
+                    ui.showModal("Невірно", "Смарт-годинник, мікрохвильовка, TV та робот-пилосос мають вбудовані комп'ютери!", "fa-circle-xmark text-red-400");
+                }
+            }
+
+            checkLevel4Step3() {
+                const selects = document.querySelectorAll('#sensor-matching select');
+                let allCorrect = true;
+                selects.forEach(select => {
+                    if (select.value !== select.getAttribute('data-target')) allCorrect = false;
+                });
+
+                if (allCorrect) {
+                    this.advanceStep(3);
+                } else {
+                    sound.playError();
+                    ui.showModal("Упс", "Перевірте відповідність датчиків та дій пристрою!", "fa-triangle-exclamation text-amber-400");
+                }
+            }
+
+            renderLevel5() {
+                const step = this.currentStepIdx;
+                const container = document.getElementById('level-content');
+
+                if (step === 0) {
+                    const stepOpts = [
+                        "Записуємо файл на накопичувач (Збереження)",
+                        "Знімаємо фото камерою (Введення)",
+                        "Надсилаємо другу в чат (Передавання)",
+                        "Застосовуємо красивий фільтр (Опрацювання)"
+                    ];
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 5.1</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Послідовність опрацювання фотографії</h4>
+                            <p class="text-xs text-slate-400 mb-4">Розставити кроки роботи з цифровим фото у правильному порядку:</p>
+                            
+                            <div class="space-y-3 mb-6" id="photo-steps">
+                                ${ui.createMatchingRow(1, "1-й Крок", stepOpts, "Знімаємо фото камерою (Введення)")}
+                                ${ui.createMatchingRow(2, "2-й Крок", stepOpts, "Застосовуємо красивий фільтр (Опрацювання)")}
+                                ${ui.createMatchingRow(3, "3-й Крок", stepOpts, "Записуємо файл на накопичувач (Збереження)")}
+                                ${ui.createMatchingRow(4, "4-й Крок", stepOpts, "Надсилаємо другу в чат (Передавання)")}
+                            </div>
+                            <button onclick="game.checkLevel5Step1()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Перевірити послідовність
+                            </button>
+                        </div>
+                    `;
+                } else if (step === 1) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 5.2</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Визнач інформаційний процес</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                💾 Запис розв'язаних математичних задач у файл та його тривале тримання на флешці — це приклад якого інформаційного процесу?
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Введення інформації', false)}
+                                ${ui.createOptionBtn('B', 'Збереження інформації', true)}
+                                ${ui.createOptionBtn('C', 'Пошук інформації', false)}
+                                ${ui.createOptionBtn('D', 'Передавання інформації', false)}
+                            </div>
+                        </div>
+                    `;
+                } else if (step === 2) {
+                    const processOpts = ["Виведення", "Збереження", "Введення", "Опрацювання"];
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 5.3</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Пристрій та Інформаційний Процес</h4>
+                            <div id="dev-process-match" class="space-y-3 mb-6">
+                                ${ui.createMatchingRow(1, "⌨️ Клавіатура / Миша", processOpts, "Введення")}
+                                ${ui.createMatchingRow(2, "🧠 Процесор", processOpts, "Опрацювання")}
+                                ${ui.createMatchingRow(3, "💽 Жорсткий диск / SSD", processOpts, "Збереження")}
+                                ${ui.createMatchingRow(4, "🖥️ Монітор / Принтер", processOpts, "Виведення")}
+                            </div>
+                            <button onclick="game.checkLevel5Step3()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Підтвердити зв'язок
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
+            checkLevel5Step1() {
+                const selects = document.querySelectorAll('#photo-steps select');
+                let correct = true;
+                selects.forEach(select => {
+                    if (select.value !== select.getAttribute('data-target')) correct = false;
+                });
+
+                if (correct) {
+                    this.advanceStep(5);
+                } else {
+                    sound.playError();
+                    ui.showModal("Невірна послідовність", "Логічний порядок: Зйомка -> Фільтр -> Запис на накопичувач -> Надсилання!", "fa-circle-xmark text-red-400");
+                }
+            }
+
+            checkLevel5Step3() {
+                const selects = document.querySelectorAll('#dev-process-match select');
+                let correct = true;
+                selects.forEach(select => {
+                    if (select.value !== select.getAttribute('data-target')) correct = false;
+                });
+
+                if (correct) {
+                    this.advanceStep(4);
+                } else {
+                    sound.playError();
+                    ui.showModal("Помилка", "Клавіатура - введення, Процесор - опрацювання, Диск - збереження, Монітор - виведення!", "fa-circle-xmark text-red-400");
+                }
+            }
+
+            renderLevel6() {
+                const step = this.currentStepIdx;
+                const container = document.getElementById('level-content');
+
+                if (step === 0) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 6.1</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Головний «Мозок» Комп'ютера</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                ⚙️ Який пристрій всередині системного блоку виконує всі обчислення та керує іншими пристроями?
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Жорсткий диск', false)}
+                                ${ui.createOptionBtn('B', 'Блок живлення', false)}
+                                ${ui.createOptionBtn('C', 'Процесор (CPU)', true)}
+                                ${ui.createOptionBtn('D', 'Комп\'ютерний корпус', false)}
+                            </div>
+                        </div>
+                    `;
+                } else if (step === 1) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 6.2</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Пристрої Введення та Виведення</h4>
+                            <p class="text-xs text-slate-400 mb-4">Розподіли пристрої за призначенням:</p>
+                            
+                            <div id="io-sorting" class="space-y-3 mb-6">
+                                ${ui.createMatchingRow(1, "⌨️ Клавіатура", ["Пристрій введення", "Пристрій виведення"], "Пристрій введення")}
+                                ${ui.createMatchingRow(2, "🖥️ Монітор", ["Пристрій введення", "Пристрій виведення"], "Пристрій виведення")}
+                                ${ui.createMatchingRow(3, "🎙️ Мікрофон", ["Пристрій введення", "Пристрій виведення"], "Пристрій введення")}
+                                ${ui.createMatchingRow(4, "🎧 Навушники", ["Пристрій введення", "Пристрій виведення"], "Пристрій виведення")}
+                            </div>
+                            <button onclick="game.checkLevel6Step2()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Перевірити пристрої
+                            </button>
+                        </div>
+                    `;
+                } else if (step === 2) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 6.3</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Таємниця Оперативної Пам'яті</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                🧠 Яка пам'ять повністю очищує весь свій вміст, коли комп'ютер вимикають з мережі?
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Оперативна пам\'ять (ОЗП / RAM)', true)}
+                                ${ui.createOptionBtn('B', 'Жорсткий диск (HDD)', false)}
+                                ${ui.createOptionBtn('C', 'USB-флешка', false)}
+                                ${ui.createOptionBtn('D', 'Оптичний диск', false)}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            checkLevel6Step2() {
+                const selects = document.querySelectorAll('#io-sorting select');
+                let correct = true;
+                selects.forEach(select => {
+                    if (select.value !== select.getAttribute('data-target')) correct = false;
+                });
+
+                if (correct) {
+                    this.advanceStep(4);
+                } else {
+                    sound.playError();
+                    ui.showModal("Упс", "Клавіатура та мікрофон — Введення! Монітор та навушники — Виведення!", "fa-circle-xmark text-red-400");
+                }
+            }
+
+            renderLevel7() {
+                const step = this.currentStepIdx;
+                const container = document.getElementById('level-content');
+
+                if (step === 0) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Фінальне завдання 7.1</span>
+                            <h4 class="font-exo font-bold text-2xl text-white mt-1 mb-3">Активація Секретного Коду</h4>
+                            <p class="text-sm text-slate-300 mb-6">
+                                Введіть або складіть головний код відновлення Інфоміста зі зібраних фрагментів ключа:
+                            </p>
+                            
+                            <div class="bg-slate-900/80 p-6 rounded-2xl border border-cyan-500/40 text-center mb-6 shadow-inner">
+                                <label class="text-xs text-slate-400 uppercase tracking-widest block mb-3">Введіть таємне слово:</label>
+                                <input type="text" id="final-code-input" placeholder="Введіть код..." class="w-full max-w-xs text-center font-exo font-black text-2xl tracking-widest py-3 rounded-xl bg-slate-950 border-2 border-cyan-500 text-cyan-300 focus:outline-none focus:border-cyan-400 uppercase">
+                            </div>
+
+                            <button onclick="game.checkLevel7Step1()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 font-exo font-bold text-lg text-slate-950 transition-all shadow-xl glow-amber">
+                                🔑 АКТИВУВАТИ КОД МІСТА
+                            </button>
+                        </div>
+                    `;
+                } else if (step === 1) {
+                    container.innerHTML = `
+                        <div>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Фінальне завдання 7.2</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Головний Інформатичний Питальник</h4>
+                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
+                                🏆 Що об'єднує апаратне забезпечення (Hardware) та програмне забезпечення (Software) в єдину працюючу систему?
+                            </div>
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Інформаційна система та процеси взаємодії між ними', true)}
+                                ${ui.createOptionBtn('B', 'Тільки електромережа будинку', false)}
+                                ${ui.createOptionBtn('C', 'Ззвичайні паперові книжки', false)}
+                                ${ui.createOptionBtn('D', 'Футбольне поле', false)}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            checkLevel7Step1() {
+                const val = document.getElementById('final-code-input').value.trim().toUpperCase();
+                if (val === "ЗНАННЯ" || val === "ZNANNYA") {
+                    this.advanceStep(5);
+                } else {
+                    sound.playError();
+                    ui.showModal("Невірний код!", "Перевір 6 фрагментів коду з верхньої панелі! Підказка: ЗНАННЯ", "fa-key text-amber-400");
+                }
+            }
+        }
+
+        class UIRenderer {
+            showScreen(screenId) {
+                const screens = ['screen-start', 'screen-map', 'screen-level', 'screen-level-clear', 'screen-victory'];
+                screens.forEach(s => {
+                    const el = document.getElementById(s);
+                    if (s === screenId) {
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                });
+            }
+
+            updateScore(score) {
+                document.getElementById('score-display').innerText = score;
+            }
+
+            updateCodeTracker(codeArr) {
+                document.getElementById('code-tracker').innerText = `КЛЮЧ: ${codeArr.join(' ')}`;
+            }
+
+            renderMap(sectors) {
+                const grid = document.getElementById('map-grid');
+                grid.innerHTML = sectors.map((sec, idx) => {
+                    const statusIcon = sec.completed 
+                        ? '<i class="fa-solid fa-circle-check text-emerald-400 text-2xl"></i>' 
+                        : (sec.unlocked ? '<i class="fa-solid fa-unlock text-cyan-400 text-2xl"></i>' : '<i class="fa-solid fa-lock text-slate-500 text-2xl"></i>');
+                    
+                    const borderStyle = sec.completed 
+                        ? 'border-emerald-500/40 bg-emerald-950/20' 
+                        : (sec.unlocked ? 'border-cyan-500/40 bg-slate-900/80 glass-panel-hover cursor-pointer' : 'border-slate-800 bg-slate-950/60 opacity-60 cursor-not-allowed');
+
+                    return `
+                        <div onclick="game.openLevel(${idx})" class="p-5 rounded-2xl border ${borderStyle} transition-all duration-300 flex flex-col justify-between h-44 relative overflow-hidden group">
+                            <div class="flex justify-between items-start">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr ${sec.color} flex items-center justify-center text-white text-xl shadow-lg">
+                                    <i class="fa-solid ${sec.icon}"></i>
+                                </div>
+                                <div>${statusIcon}</div>
+                            </div>
+
+                            <div>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Сектор ${sec.id}</span>
+                                <h4 class="font-exo font-bold text-lg text-white group-hover:text-cyan-300 transition-colors">${sec.name}</h4>
+                            </div>
+
+                            ${sec.completed ? `<span class="absolute bottom-2 right-3 text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Пройдено</span>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateLevelHeader(lvlNum, lvlName, stepIdx, totalSteps) {
+                document.getElementById('level-badge').innerText = `Рівень ${lvlNum}`;
+                document.getElementById('level-title').innerText = lvlName;
+
+                const pills = document.getElementById('substep-pills');
+                pills.innerHTML = Array.from({length: totalSteps}).map((_, i) => {
+                    const active = i === stepIdx ? 'bg-cyan-400 w-6' : (i < stepIdx ? 'bg-emerald-400 w-2.5' : 'bg-slate-700 w-2.5');
+                    return `<div class="h-2 rounded-full transition-all duration-300 ${active}"></div>`;
+                }).join('');
+            }
+
+            createOptionBtn(label, text, isCorrect) {
+                return `
+                    <button onclick="ui.handleOptionClick(this, ${isCorrect})" class="w-full p-4 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700 hover:border-cyan-500/50 text-left transition-all flex items-center gap-3 text-sm sm:text-base font-medium group">
+                        <span class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 text-cyan-400 font-bold flex items-center justify-center shrink-0 group-hover:border-cyan-400">${label}</span>
+                        <span class="text-slate-200 group-hover:text-white">${text}</span>
+                    </button>
+                `;
+            }
+
+            createCheckCard(text, isCorrect, iconClass) {
+                return `
+                    <div onclick="ui.toggleCheckCard(this)" data-correct="${isCorrect}" class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 hover:border-slate-500 cursor-pointer transition-all flex items-center gap-3">
+                        <i class="fa-solid ${iconClass} text-xl text-cyan-400"></i>
+                        <span class="text-sm font-semibold text-slate-200 flex-grow">${text}</span>
+                        <div class="checkbox-box w-6 h-6 rounded-md border border-slate-600 flex items-center justify-center text-xs"></div>
+                    </div>
+                `;
+            }
+
+            toggleCheckCard(el) {
+                sound.playBeep(650, 'sine', 0.05);
+                const isChecked = el.classList.contains('border-cyan-500');
+                const box = el.querySelector('.checkbox-box');
+
+                if (isChecked) {
+                    el.classList.remove('border-cyan-500', 'bg-cyan-950/30');
+                    el.classList.add('border-slate-700', 'bg-slate-800/80');
+                    box.innerHTML = '';
+                    box.classList.remove('bg-cyan-500', 'border-cyan-400', 'text-white');
+                } else {
+                    el.classList.remove('border-slate-700', 'bg-slate-800/80');
+                    el.classList.add('border-cyan-500', 'bg-cyan-950/30');
+                    box.innerHTML = '<i class="fa-solid fa-check"></i>';
+                    box.classList.add('bg-cyan-500', 'border-cyan-400', 'text-white');
+                }
+            }
+
+            createMatchingRow(id, label, options, correctTarget) {
+                const selectOpts = options.map(o => `<option value="${o}">${o}</option>`).join('');
+                return `
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3.5 rounded-xl bg-slate-900/70 border border-slate-800">
+                        <span class="text-sm font-medium text-slate-200">${label}</span>
+                        <select data-target="${correctTarget}" class="w-full sm:w-auto px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-cyan-300 text-xs sm:text-sm font-semibold focus:outline-none focus:border-cyan-400">
+                            <option value="">Обери варіант...</option>
+                            ${selectOpts}
+                        </select>
+                    </div>
+                `;
+            }
+
+            handleOptionClick(btn, isCorrect) {
+                if (isCorrect) {
+                    btn.classList.remove('bg-slate-800/90', 'border-slate-700');
+                    btn.classList.add('bg-emerald-950/60', 'border-emerald-500', 'text-emerald-300');
+                    game.advanceStep(5);
+                } else {
+                    sound.playError();
+                    btn.classList.add('shake-animation', 'border-red-500', 'bg-red-950/40');
+                    setTimeout(() => btn.classList.remove('shake-animation'), 400);
+                    ui.showModal("Не зовсім вірно", "Подумай ще та спробуй обрати іншу відповідь!", "fa-xmark text-red-400");
+                }
+            }
+
+            showModal(title, text, iconClass = "fa-lightbulb text-amber-400") {
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-body').innerText = text;
+                document.getElementById('modal-icon').className = `fa-solid ${iconClass}`;
+                document.getElementById('modal-overlay').classList.remove('hidden');
+            }
+
+            closeModal() {
+                sound.playBeep(400, 'sine', 0.05);
+                document.getElementById('modal-overlay').classList.add('hidden');
+            }
+
+            showLevelClear(title, letter, points, hasBonus) {
+                document.getElementById('clear-title').innerText = `🎉 РІВЕНЬ ПРОЙДЕНО!`;
+                document.getElementById('clear-desc').innerText = `Ти відновив інформаційні процеси у секторі «${title}»!`;
+                document.getElementById('clear-code-letter').innerText = `«${letter}»`;
+                document.getElementById('clear-points').innerText = points;
+
+                const bonusBadge = document.getElementById('clear-bonus-badge');
+                if (hasBonus) {
+                    bonusBadge.classList.remove('hidden');
+                } else {
+                    bonusBadge.classList.add('hidden');
+                }
+
+                this.showScreen('screen-level-clear');
+            }
+
+            triggerConfetti() {
+                const colors = ['#06b6d4', '#3b82f6', '#6366f1', '#10b981', '#f59e0b'];
+                for (let i = 0; i < 50; i++) {
+                    const piece = document.createElement('div');
+                    piece.className = 'confetti-piece';
+                    piece.style.left = Math.random() * 100 + 'vw';
+                    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    piece.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                    document.body.appendChild(piece);
+                    setTimeout(() => piece.remove(), 3500);
+                }
+            }
+        }
+
+        const game = new GameEngine();
+        const ui = new UIRenderer();
+
+        window.onload = function() {
+            console.log("Інфоквест готовий до старту!");
+        };
+    </script>
+</body>
+</html>
