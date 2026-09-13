@@ -291,7 +291,7 @@
 
     </main>
 
-    <!-- Feedback / Hint Modal -->
+    <!-- Modal Dialog -->
     <div id="modal-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-md w-full border border-slate-700 shadow-2xl transform transition-all">
             <div id="modal-icon-wrap" class="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl mb-4 mx-auto border border-amber-500/30">
@@ -514,7 +514,7 @@
                     "4-1": "Комп'ютер пральної машини керує режимами прання, температурою та віджимом.",
                     "4-2": "Сенсори вимірюють параметри (температуру, перешкоди), а комп'ютер виконує дію.",
                     "5-0": "Послідовність: Спочатку знімаємо (Введення), потім застосовуємо фільтр (Опрацювання), фіксуємо файл (Збереження) та надсилаємо (Передавання).",
-                    "5-1": "Розміщення та тривала фіксація файлу на накопичувачі — це процес 'Збереження інформації'.",
+                    "5-1": "Розміщення та тривала фіксація файлу на накопичувачі — це процес фіксації та зберігання даних.",
                     "5-2": "Клавіатура — Введення, Процесор — Опрацювання, Пам'ять — Збереження, Монітор — Виведення.",
                     "6-0": "Головним 'мозком' комп'ютера, що виконує обчислення, є Процесор (CPU).",
                     "6-1": "Пристрої введення передають дані В комп'ютер (миша, клавіатура), виведення — показують З комп'ютера (монітор, звук).",
@@ -616,7 +616,7 @@
                             <div class="grid grid-cols-1 gap-3">
                                 ${ui.createOptionBtn('A', 'Будь-який електричний прилад в будинку', false)}
                                 ${ui.createOptionBtn('B', 'Система, яка забезпечує роботу з інформацією (пошук, збереження, опрацювання)', true)}
-                                ${ui.createOptionBtn('C', 'Тільки персональний комп\'ютер', false)}
+                                ${ui.createOptionBtn('C', "Тільки персональний комп'ютер", false)}
                                 ${ui.createOptionBtn('D', 'Тільки програма на смартфоні', false)}
                             </div>
                         </div>
@@ -631,7 +631,7 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" id="multi-select-l1">
                                 ${ui.createCheckCard('Google Classroom', true, 'fa-graduation-cap')}
                                 ${ui.createCheckCard('Банкомат', true, 'fa-money-bill-transfer')}
-                                ${ui.createCheckCard('Звичайний стілець', false, 'fa-chair')}
+                                ${ui.createCheckCard('Ззвичайний стілець', false, 'fa-chair')}
                                 ${ui.createCheckCard('Електронний щоденник', true, 'fa-book-bookmark')}
                                 ${ui.createCheckCard('Комп\'ютерна мережа', true, 'fa-network-wired')}
                                 ${ui.createCheckCard('Футбольний м\'яч', false, 'fa-football')}
@@ -646,31 +646,32 @@
                         <div>
                             <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 1.3</span>
                             <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Збери систему</h4>
-                            <p class="text-xs text-slate-400 mb-4">Які з наведених складових можуть взаємодіяти в інформаційній системі?</p>
+                            <p class="text-xs text-slate-400 mb-4">Проаналізуй наведені складові. Які з них взаємодіють у повноцінній інформаційній системі?</p>
                             
-                            <div class="grid grid-cols-2 gap-4 mb-6">
-                                <div class="p-4 rounded-2xl bg-slate-800/80 border border-cyan-500/30 text-center">
-                                    <i class="fa-solid fa-user-astronaut text-3xl text-cyan-400 mb-2"></i>
-                                    <div class="font-bold text-sm">🧑 Людина</div>
+                            <div class="grid grid-cols-2 gap-3 mb-5">
+                                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center gap-2">
+                                    <i class="fa-solid fa-user-astronaut text-cyan-400 text-xl"></i>
+                                    <span class="text-xs font-semibold text-slate-200">🧑 Людина</span>
                                 </div>
-                                <div class="p-4 rounded-2xl bg-slate-800/80 border border-cyan-500/30 text-center">
-                                    <i class="fa-solid fa-database text-3xl text-blue-400 mb-2"></i>
-                                    <div class="font-bold text-sm">💾 Дані</div>
+                                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center gap-2">
+                                    <i class="fa-solid fa-database text-blue-400 text-xl"></i>
+                                    <span class="text-xs font-semibold text-slate-200">💾 Дані</span>
                                 </div>
-                                <div class="p-4 rounded-2xl bg-slate-800/80 border border-cyan-500/30 text-center">
-                                    <i class="fa-solid fa-desktop text-3xl text-indigo-400 mb-2"></i>
-                                    <div class="font-bold text-sm">💻 Технічні засоби</div>
+                                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center gap-2">
+                                    <i class="fa-solid fa-desktop text-indigo-400 text-xl"></i>
+                                    <span class="text-xs font-semibold text-slate-200">💻 Технічні засоби</span>
                                 </div>
-                                <div class="p-4 rounded-2xl bg-slate-800/80 border border-cyan-500/30 text-center">
-                                    <i class="fa-solid fa-code text-3xl text-teal-400 mb-2"></i>
-                                    <div class="font-bold text-sm">⚙️ Програми</div>
+                                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center gap-2">
+                                    <i class="fa-solid fa-code text-teal-400 text-xl"></i>
+                                    <span class="text-xs font-semibold text-slate-200">⚙️ Програми</span>
                                 </div>
                             </div>
-                            
-                            <div class="flex flex-col sm:flex-row gap-3">
-                                <button onclick="game.advanceStep(5)" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 font-bold text-white transition-all shadow-lg">
-                                    ✅ Усі чотири складові взаємодіють!
-                                </button>
+
+                            <div class="grid grid-cols-1 gap-3">
+                                ${ui.createOptionBtn('A', 'Тільки Технічні засоби та Програми (без людини)', false)}
+                                ${ui.createOptionBtn('B', 'Усі чотири складові: Людина, Дані, Техніка та Програми', true)}
+                                ${ui.createOptionBtn('C', 'Тільки Людина та Дані (без технічних засобів)', false)}
+                                ${ui.createOptionBtn('D', 'Тільки Програми та мережа Інтернет', false)}
                             </div>
                         </div>
                     `;
@@ -800,26 +801,20 @@
                         </div>
                     `;
                 } else if (step === 1) {
+                    const compOpts = ["Ноутбук", "Суперкомп'ютер", "Планшет", "Вбудований комп'ютер", "Смарт-годинник"];
                     container.innerHTML = `
                         <div>
                             <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 3.2</span>
-                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Кому який комп'ютер?</h4>
-                            <div class="space-y-4 mb-6">
-                                <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-sm">
-                                    <span class="text-cyan-400 font-bold">1. Науковцю</span> потрібно виконувати мільярди складних обчислень для прогнозу погоди.
-                                    <div class="mt-2 font-bold text-emerald-400">-> Суперкомп'ютер</div>
-                                </div>
-                                <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-sm">
-                                    <span class="text-cyan-400 font-bold">2. Учень</span> хоче зручно працювати з уроками в школі та вдома.
-                                    <div class="mt-2 font-bold text-emerald-400">-> Ноутбук</div>
-                                </div>
-                                <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-sm">
-                                    <span class="text-cyan-400 font-bold">3. Автомобіль</span> потребує контролю за роботою двигуна та гальм.
-                                    <div class="mt-2 font-bold text-emerald-400">-> Вбудований комп'ютер</div>
-                                </div>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Кому який комп'ютер?</h4>
+                            <p class="text-xs text-slate-400 mb-4">Добери відповідний тип комп'ютера для кожної ситуації:</p>
+                            
+                            <div id="situation-matching" class="space-y-3 mb-6">
+                                ${ui.createMatchingRow(1, "👨‍🔬 Науковцю для розрахунку мільярдів складних обчислень", compOpts, "Суперкомп'ютер")}
+                                ${ui.createMatchingRow(2, "🎒 Учень хоче зручно працювати з уроками в школі та вдома", compOpts, "Ноутбук")}
+                                ${ui.createMatchingRow(3, "🚗 Автомобіль для керування роботою двигуна та гальм", compOpts, "Вбудований комп'ютер")}
                             </div>
-                            <button onclick="game.advanceStep(3)" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 font-bold text-white transition-all shadow-md">
-                                ✅ Все абсолютно вірно!
+                            <button onclick="game.checkLevel3Step2()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Перевірити відповіді
                             </button>
                         </div>
                     `;
@@ -835,7 +830,7 @@
                                 ${ui.createOptionBtn('A', 'Ноутбук', false)}
                                 ${ui.createOptionBtn('B', 'Планшет', false)}
                                 ${ui.createOptionBtn('C', 'Смартфон', false)}
-                                ${ui.createOptionBtn('D', 'Суперкомп\'ютер', true)}
+                                ${ui.createOptionBtn('D', "Суперкомп'ютер", true)}
                             </div>
                         </div>
                     `;
@@ -857,6 +852,21 @@
                 }
             }
 
+            checkLevel3Step2() {
+                const selects = document.querySelectorAll('#situation-matching select');
+                let allCorrect = true;
+                selects.forEach(select => {
+                    if (select.value !== select.getAttribute('data-target')) allCorrect = false;
+                });
+
+                if (allCorrect) {
+                    this.advanceStep(3);
+                } else {
+                    sound.playError();
+                    ui.showModal("Упс!", "Подумай: для складних обчислень науковцю потрібен суперкомп'ютер, учню для навчання — ноутбук, а автомобілю — вбудований комп'ютер!", "fa-triangle-exclamation text-amber-400");
+                }
+            }
+
             renderLevel4() {
                 const step = this.currentStepIdx;
                 const container = document.getElementById('level-content');
@@ -870,11 +880,11 @@
                             
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" id="embedded-select">
                                 ${ui.createCheckCard('Смарт-годинник', true, 'fa-clock')}
-                                ${ui.createCheckCard('Звичайний механічний тостер', false, 'fa-bread-slice')}
+                                ${ui.createCheckCard('Ззвичайний механічний тостер', false, 'fa-bread-slice')}
                                 ${ui.createCheckCard('Мікрохвильовка з програмами', true, 'fa-kitchen-set')}
                                 ${ui.createCheckCard('Smart TV (Телевізор)', true, 'fa-tv')}
                                 ${ui.createCheckCard('Робот-пилосос', true, 'fa-robot')}
-                                ${ui.createCheckCard('Звичайний металевий ключ', false, 'fa-key')}
+                                ${ui.createCheckCard('Ззвичайний металевий ключ', false, 'fa-key')}
                             </div>
                             <button onclick="game.checkLevel4Step1()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
                                 Перевірити вибір
@@ -882,206 +892,20 @@
                         </div>
                     `;
                 } else if (step === 1) {
+                    const compOpts = ["Ноутбук", "Суперкомп'ютер", "Планшет", "Вбудований комп'ютер", "Смарт-годинник"];
                     container.innerHTML = `
                         <div>
-                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 4.2</span>
-                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Роль мікрокомп'ютера</h4>
-                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
-                                🧺 Яку головну функцію виконує вбудований комп'ютер у пральній машині?
-                            </div>
-                            <div class="grid grid-cols-1 gap-3">
-                                ${ui.createOptionBtn('A', 'Керує режимами прання, температурою та віджимом', true)}
-                                ${ui.createOptionBtn('B', 'Самостійно купує пральний порошок у магазині', false)}
-                                ${ui.createOptionBtn('C', 'Показує мультфільми під час прання', false)}
-                                ${ui.createOptionBtn('D', 'Прасує одяг гарячою праскою', false)}
-                            </div>
-                        </div>
-                    `;
-                } else if (step === 2) {
-                    const sensorOpts = ["Зупинити робот-пилосос", "Подати сигнал будильника", "Регулювати нагрів"];
-                    container.innerHTML = `
-                        <div>
-                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 4.3</span>
-                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Мікро-пазл: Датчики та Дії</h4>
-                            <p class="text-xs text-slate-400 mb-4">З'єднай датчик із правильною дією вбудованого комп'ютера:</p>
+                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 3.2</span>
+                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Кому який комп'ютер?</h4>
+                            <p class="text-xs text-slate-400 mb-4">Добери відповідний тип комп'ютера для кожної ситуації:</p>
                             
-                            <div id="sensor-matching" class="space-y-3 mb-6">
-                                ${ui.createMatchingRow(1, "🌡️ Датчик температури в духовій шафі", sensorOpts, "Регулювати нагрів")}
-                                ${ui.createMatchingRow(2, "🦇 Датчик перешкоди попереду", sensorOpts, "Зупинити робот-пилосос")}
-                                ${ui.createMatchingRow(3, "⏰ Таймер зворотного відліку", sensorOpts, "Подати сигнал будильника")}
+                            <div id="situation-matching" class="space-y-3 mb-6">
+                                ${ui.createMatchingRow(1, "👨‍🔬 Науковцю для розрахунку мільярдів складних обчислень", compOpts, "Суперкомп'ютер")}
+                                ${ui.createMatchingRow(2, "🎒 Учні беруть гаджет із собою на уроки та додому", compOpts, "Ноутбук")}
+                                ${ui.createMatchingRow(3, "🚗 Для керування роботою двигуна та гальм автомобіля", compOpts, "Вбудований комп'ютер")}
                             </div>
-                            <button onclick="game.checkLevel4Step3()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
-                                Завершити зв'язок
-                            </button>
-                        </div>
-                    `;
-                }
-            }
-
-            checkLevel4Step1() {
-                const cards = document.querySelectorAll('#embedded-select [data-correct]');
-                let correctCount = 0;
-                let wrongSelected = false;
-
-                cards.forEach(card => {
-                    const isChecked = card.classList.contains('border-cyan-500');
-                    const isCorrect = card.getAttribute('data-correct') === 'true';
-                    if (isChecked && isCorrect) correctCount++;
-                    if (isChecked && !isCorrect) wrongSelected = true;
-                });
-
-                if (correctCount === 4 && !wrongSelected) {
-                    this.advanceStep(5);
-                } else {
-                    sound.playError();
-                    ui.showModal("Невірно", "Смарт-годинник, мікрохвильовка, TV та робот-пилосос мають вбудовані комп'ютери!", "fa-circle-xmark text-red-400");
-                }
-            }
-
-            checkLevel4Step3() {
-                const selects = document.querySelectorAll('#sensor-matching select');
-                let allCorrect = true;
-                selects.forEach(select => {
-                    if (select.value !== select.getAttribute('data-target')) allCorrect = false;
-                });
-
-                if (allCorrect) {
-                    this.advanceStep(3);
-                } else {
-                    sound.playError();
-                    ui.showModal("Упс", "Перевірте відповідність датчиків та дій пристрою!", "fa-triangle-exclamation text-amber-400");
-                }
-            }
-
-            renderLevel5() {
-                const step = this.currentStepIdx;
-                const container = document.getElementById('level-content');
-
-                if (step === 0) {
-                    const stepOpts = [
-                        "Записуємо файл на накопичувач (Збереження)",
-                        "Знімаємо фото камерою (Введення)",
-                        "Надсилаємо другу в чат (Передавання)",
-                        "Застосовуємо красивий фільтр (Опрацювання)"
-                    ];
-                    container.innerHTML = `
-                        <div>
-                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 5.1</span>
-                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Послідовність опрацювання фотографії</h4>
-                            <p class="text-xs text-slate-400 mb-4">Розставити кроки роботи з цифровим фото у правильному порядку:</p>
-                            
-                            <div class="space-y-3 mb-6" id="photo-steps">
-                                ${ui.createMatchingRow(1, "1-й Крок", stepOpts, "Знімаємо фото камерою (Введення)")}
-                                ${ui.createMatchingRow(2, "2-й Крок", stepOpts, "Застосовуємо красивий фільтр (Опрацювання)")}
-                                ${ui.createMatchingRow(3, "3-й Крок", stepOpts, "Записуємо файл на накопичувач (Збереження)")}
-                                ${ui.createMatchingRow(4, "4-й Крок", stepOpts, "Надсилаємо другу в чат (Передавання)")}
-                            </div>
-                            <button onclick="game.checkLevel5Step1()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
-                                Перевірити послідовність
-                            </button>
-                        </div>
-                    `;
-                } else if (step === 1) {
-                    container.innerHTML = `
-                        <div>
-                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 5.2</span>
-                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Визнач інформаційний процес</h4>
-                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
-                                💾 Запис розв'язаних математичних задач у файл та його тривале тримання на флешці — це приклад якого інформаційного процесу?
-                            </div>
-                            <div class="grid grid-cols-1 gap-3">
-                                ${ui.createOptionBtn('A', 'Введення інформації', false)}
-                                ${ui.createOptionBtn('B', 'Збереження інформації', true)}
-                                ${ui.createOptionBtn('C', 'Пошук інформації', false)}
-                                ${ui.createOptionBtn('D', 'Передавання інформації', false)}
-                            </div>
-                        </div>
-                    `;
-                } else if (step === 2) {
-                    const processOpts = ["Виведення", "Збереження", "Введення", "Опрацювання"];
-                    container.innerHTML = `
-                        <div>
-                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 5.3</span>
-                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Пристрій та Інформаційний Процес</h4>
-                            <div id="dev-process-match" class="space-y-3 mb-6">
-                                ${ui.createMatchingRow(1, "⌨️ Клавіатура / Миша", processOpts, "Введення")}
-                                ${ui.createMatchingRow(2, "🧠 Процесор", processOpts, "Опрацювання")}
-                                ${ui.createMatchingRow(3, "💽 Жорсткий диск / SSD", processOpts, "Збереження")}
-                                ${ui.createMatchingRow(4, "🖥️ Монітор / Принтер", processOpts, "Виведення")}
-                            </div>
-                            <button onclick="game.checkLevel5Step3()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
-                                Підтвердити зв'язок
-                            </button>
-                        </div>
-                    `;
-                }
-            }
-
-            checkLevel5Step1() {
-                const selects = document.querySelectorAll('#photo-steps select');
-                let correct = true;
-                selects.forEach(select => {
-                    if (select.value !== select.getAttribute('data-target')) correct = false;
-                });
-
-                if (correct) {
-                    this.advanceStep(5);
-                } else {
-                    sound.playError();
-                    ui.showModal("Невірна послідовність", "Логічний порядок: Зйомка -> Фільтр -> Запис на накопичувач -> Надсилання!", "fa-circle-xmark text-red-400");
-                }
-            }
-
-            checkLevel5Step3() {
-                const selects = document.querySelectorAll('#dev-process-match select');
-                let correct = true;
-                selects.forEach(select => {
-                    if (select.value !== select.getAttribute('data-target')) correct = false;
-                });
-
-                if (correct) {
-                    this.advanceStep(4);
-                } else {
-                    sound.playError();
-                    ui.showModal("Помилка", "Клавіатура - введення, Процесор - опрацювання, Диск - збереження, Монітор - виведення!", "fa-circle-xmark text-red-400");
-                }
-            }
-
-            renderLevel6() {
-                const step = this.currentStepIdx;
-                const container = document.getElementById('level-content');
-
-                if (step === 0) {
-                    container.innerHTML = `
-                        <div>
-                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 6.1</span>
-                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-3">Головний «Мозок» Комп'ютера</h4>
-                            <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800 mb-4 text-sm leading-relaxed">
-                                ⚙️ Який пристрій всередині системного блоку виконує всі обчислення та керує іншими пристроями?
-                            </div>
-                            <div class="grid grid-cols-1 gap-3">
-                                ${ui.createOptionBtn('A', 'Жорсткий диск', false)}
-                                ${ui.createOptionBtn('B', 'Блок живлення', false)}
-                                ${ui.createOptionBtn('C', 'Процесор (CPU)', true)}
-                                ${ui.createOptionBtn('D', 'Комп\'ютерний корпус', false)}
-                            </div>
-                        </div>
-                    `;
-                } else if (step === 1) {
-                    container.innerHTML = `
-                        <div>
-                            <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wider">Завдання 6.2</span>
-                            <h4 class="font-exo font-bold text-xl text-white mt-1 mb-2">Пристрої Введення та Виведення</h4>
-                            <p class="text-xs text-slate-400 mb-4">Розподіли пристрої за призначенням:</p>
-                            
-                            <div id="io-sorting" class="space-y-3 mb-6">
-                                ${ui.createMatchingRow(1, "⌨️ Клавіатура", ["Пристрій введення", "Пристрій виведення"], "Пристрій введення")}
-                                ${ui.createMatchingRow(2, "🖥️ Монітор", ["Пристрій введення", "Пристрій виведення"], "Пристрій виведення")}
-                                ${ui.createMatchingRow(3, "🎙️ Мікрофон", ["Пристрій введення", "Пристрій виведення"], "Пристрій введення")}
-                                ${ui.createMatchingRow(4, "🎧 Навушники", ["Пристрій введення", "Пристрій виведення"], "Пристрій виведення")}
-                            </div>
-                            <button onclick="game.checkLevel6Step2()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
-                                Перевірити пристрої
+                            <button onclick="game.checkLevel3Step2()" class="w-full py-3.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-bold text-white transition-all shadow-md">
+                                Перевірити вибір
                             </button>
                         </div>
                     `;
@@ -1094,7 +918,7 @@
                                 🧠 Яка пам'ять повністю очищує весь свій вміст, коли комп'ютер вимикають з мережі?
                             </div>
                             <div class="grid grid-cols-1 gap-3">
-                                ${ui.createOptionBtn('A', 'Оперативна пам\'ять (ОЗП / RAM)', true)}
+                                ${ui.createOptionBtn('A', "Оперативна пам'ять (ОЗП / RAM)", true)}
                                 ${ui.createOptionBtn('B', 'Жорсткий диск (HDD)', false)}
                                 ${ui.createOptionBtn('C', 'USB-флешка', false)}
                                 ${ui.createOptionBtn('D', 'Оптичний диск', false)}
